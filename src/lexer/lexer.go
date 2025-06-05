@@ -1,6 +1,9 @@
 package lexer
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
 type regexHandler func(lex *lex, regex *regexp.Regexp)
 
@@ -40,6 +43,28 @@ func (lex *lexer) at_eof() bool {
 func Tokenize(source string) []Token {
 	lex := createLexer(source)
 
+	for !lex.at_eof() {
+		matched := false
+
+		for _, pattern := range lex.patterns{
+		    loc := pattern.regex.FindStringIndex(lex.remainder())
+
+			if loc 1= nil && loc[0] ==0 {
+				pattern.handler (lex, pattern.regex)
+				matched =true
+				break
+			}
+
+		}
+
+		if !matched {
+			panic(fmt.Sprintf("lexer:: error -> unregonized token near %s\n", lex.remainder()))
+		}
+	}
+
+	lex.push(NewToken(EOF, "EOF"))
+	
+
 	return lex.Tokens
 }
 
@@ -56,7 +81,37 @@ func createLexer(source string) *lexer {
 		source: source,
 		Tokens: make([]Token, 0),
 		patterns: []regexPattern{
-			{regex.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
+			{regexp.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
+			{regexp.MustCompile(`\]`), defaultHandler(CLOSE_BRACKET, "]")},
+			{regexp.MustCompile(`\{`), defaultHandler(OPEN_CURLY, "{")},
+			{regexp.MustCompile(`}`), defaultHandler(CLOSE_CURLY, "}")},
+			{regexp.MustCompile(`(`), defaultHandler(OPEN_PAREN, "(")},
+			{regexp.MustCompile(`)`), defaultHandler(CLOSE_PAREN, ")")},
+			{regexp.MustCompile(`==`), defaultHandler(EQUALS, "==")},
+			{regexp.MustCompile(`!=`), defaultHandler(NOT_EQUALS, "!=")},
+			{regexp.MustCompile(`=`), defaultHandler(ASSIGNMENT, "=")},
+			{regexp.MustCompile(`!`), defaultHandler(NOT, "!")},
+			{regexp.MustCompile(`<=`), defaultHandler(LESS_EQUALS, "<=")},
+			{regexp.MustCompile(`<`), defaultHandler(LESS, "<")},
+			{regexp.MustCompile(`>=`), defaultHandler(GREATER_EQUALS, ">=")},
+			{regexp.MustCompile(`>`), defaultHandler(GREATER, ">")},
+			{regexp.MustCompile(`\|\|`), defaultHandler(OR, "||")},
+			{regexp.MustCompile(`&&`), defaultHandler(AND, "&&")},
+			{regexp.MustCompile(`\.\.`), defaultHandler(DOT_DOT, "..")},
+			{regexp.MustCompile(`\.`), defaultHandler(DOT, ".")},
+			{regexp.MustCompile(`;`), defaultHandler(SEMICOLON, ";")},
+			{regexp.MustCompile(`:`), defaultHandler(COLON, ":")},
+			{regexp.MustCompile(`\?`), defaultHandler(QUESTION, "?")},
+			{regexp.MustCompile(`,`), defaultHandler(COMMA, ",")},
+			{regexp.MustCompile(`\+\+`), defaultHandler(PLUS_PLUS, "++")},
+			{regexp.MustCompile(`--`), defaultHandler(MINUS_MINUS, "--")},
+			{regexp.MustCompile(`\+=`), defaultHandler(PLUS_EQUALS, "+=")},
+			{regexp.MustCompile(`-=`), defaultHandler(MINUS_EQUALS, "-=")},
+			{regexp.MustCompile(`\+`), defaultHandler(PLUS, "+")},
+			{regexp.MustCompile(`-`), defaultHandler(DASH, "-")},
+
+
+
 		},
 	}
 }
