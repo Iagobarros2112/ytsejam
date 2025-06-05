@@ -46,12 +46,12 @@ func Tokenize(source string) []Token {
 	for !lex.at_eof() {
 		matched := false
 
-		for _, pattern := range lex.patterns{
-		    loc := pattern.regex.FindStringIndex(lex.remainder())
+		for _, pattern := range lex.patterns {
+			loc := pattern.regex.FindStringIndex(lex.remainder())
 
-			if loc 1= nil && loc[0] ==0 {
-				pattern.handler (lex, pattern.regex)
-				matched =true
+			if loc != nil && loc[0] == 0 {
+				pattern.handler(lex, pattern.regex)
+				matched = true
 				break
 			}
 
@@ -63,7 +63,6 @@ func Tokenize(source string) []Token {
 	}
 
 	lex.push(NewToken(EOF, "EOF"))
-	
 
 	return lex.Tokens
 }
@@ -84,16 +83,16 @@ func createLexer(source string) *lexer {
 			{regexp.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
 			{regexp.MustCompile(`\]`), defaultHandler(CLOSE_BRACKET, "]")},
 			{regexp.MustCompile(`\{`), defaultHandler(OPEN_CURLY, "{")},
-			{regexp.MustCompile(`}`), defaultHandler(CLOSE_CURLY, "}")},
-			{regexp.MustCompile(`(`), defaultHandler(OPEN_PAREN, "(")},
-			{regexp.MustCompile(`)`), defaultHandler(CLOSE_PAREN, ")")},
+			{regexp.MustCompile(`\}`), defaultHandler(CLOSE_CURLY, "}")},
+			{regexp.MustCompile(`\(`), defaultHandler(OPEN_PAREN, "(")},
+			{regexp.MustCompile(`\)`), defaultHandler(CLOSE_PAREN, ")")},
 			{regexp.MustCompile(`==`), defaultHandler(EQUALS, "==")},
 			{regexp.MustCompile(`!=`), defaultHandler(NOT_EQUALS, "!=")},
+			{regexp.MustCompile(`<=`), defaultHandler(LESS_EQUALS, "<=")},
+			{regexp.MustCompile(`>=`), defaultHandler(GREATER_EQUALS, ">=")},
 			{regexp.MustCompile(`=`), defaultHandler(ASSIGNMENT, "=")},
 			{regexp.MustCompile(`!`), defaultHandler(NOT, "!")},
-			{regexp.MustCompile(`<=`), defaultHandler(LESS_EQUALS, "<=")},
 			{regexp.MustCompile(`<`), defaultHandler(LESS, "<")},
-			{regexp.MustCompile(`>=`), defaultHandler(GREATER_EQUALS, ">=")},
 			{regexp.MustCompile(`>`), defaultHandler(GREATER, ">")},
 			{regexp.MustCompile(`\|\|`), defaultHandler(OR, "||")},
 			{regexp.MustCompile(`&&`), defaultHandler(AND, "&&")},
@@ -109,9 +108,6 @@ func createLexer(source string) *lexer {
 			{regexp.MustCompile(`-=`), defaultHandler(MINUS_EQUALS, "-=")},
 			{regexp.MustCompile(`\+`), defaultHandler(PLUS, "+")},
 			{regexp.MustCompile(`-`), defaultHandler(DASH, "-")},
-
-
-
 		},
 	}
 }
