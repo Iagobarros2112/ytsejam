@@ -62,7 +62,7 @@ const (
 	FN
 	IF
 	ELSE
-	FOEACH
+	FOREACH
 	WHILE
 	FOR
 	EXPORT
@@ -125,7 +125,7 @@ func TokenKindString(kind TokenKind) string {
 	case CLOSE_BRACKET:
 		return "close_bracket"
 	case OPEN_CURLY:
-		return "close_curly"
+		return "open_curly"
 	case CLOSE_CURLY:
 		return "close_curly"
 	case OPEN_PAREN:
@@ -202,7 +202,7 @@ func TokenKindString(kind TokenKind) string {
 		return "if"
 	case ELSE:
 		return "else"
-	case FOEACH:
+	case FOREACH:
 		return "foreach"
 	case FOR:
 		return "for"
@@ -212,9 +212,11 @@ func TokenKindString(kind TokenKind) string {
 		return "export"
 	case IN:
 		return "in"
+	case TYPEOF:
+		return "typeof"
 
 	default:
-		return fmt.Sprintf("unknow(%d)", kind)
+		return fmt.Sprintf("unknown(%d)", kind)
 
 	}
 
