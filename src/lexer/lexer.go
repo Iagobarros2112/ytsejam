@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-type regexHandler func(lex *lex, regex *regexp.Regexp)
+type regexHandler func(lex *lexer, regex *regexp.Regexp)
 
 type regexPattern struct {
 	regex   *regexp.Regexp
@@ -80,6 +80,8 @@ func createLexer(source string) *lexer {
 		source: source,
 		Tokens: make([]Token, 0),
 		patterns: []regexPattern{
+			{regexp.MustCompile(`[0-9]+(\.[0-9]+)?`), numberHandler},
+			{regexp.MustCompile(`\s+`), skipHandler},
 			{regexp.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
 			{regexp.MustCompile(`\]`), defaultHandler(CLOSE_BRACKET, "]")},
 			{regexp.MustCompile(`\{`), defaultHandler(OPEN_CURLY, "{")},
@@ -110,4 +112,16 @@ func createLexer(source string) *lexer {
 			{regexp.MustCompile(`-`), defaultHandler(DASH, "-")},
 		},
 	}
+}
+
+func skipHandler(lex *lexer, regex *regexp.Regexp) {
+	match := regex.FindStringIndex(lex.remainder())
+	lex.advanceN(match[1])
+
+}
+
+func numberHandler(lex *lexer, regex *regexp.Regexp) {
+	match := regex.FindString(lex.remainder())
+	lex.push(NewToken(NUMBER, match))
+	lex.advanceN(len(match))
 }
